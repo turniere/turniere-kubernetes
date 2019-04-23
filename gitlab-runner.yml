@@ -44,7 +44,7 @@ data:
       [runners.kubernetes]
         namespace = "gitlab"
         poll_timeout = 600
-        service_account_overwrite_allowed = "gitlab-runner"
+        service_account_overwrite_allowed = "gitlab-(runner|deploy)"
 ---
 apiVersion: apps/v1
 kind: Deployment
