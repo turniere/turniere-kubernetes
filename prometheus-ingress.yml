@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: prometheus.turnie.re
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-operated
+          servicePort: web
