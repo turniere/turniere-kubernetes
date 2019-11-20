@@ -34,6 +34,10 @@ metadata:
   name: gitlab-runner-configmap
   namespace: gitlab
 data:
+  entrypoint: |
+    #!/bin/bash
+    cp /scripts/config.toml /etc/gitlab-runner/config.toml
+    exec /entrypoint run
   config.toml: |
     concurrent = 4
     [[runners]]
@@ -45,6 +49,7 @@ data:
         namespace = "gitlab"
         poll_timeout = 600
         service_account_overwrite_allowed = "gitlab-(runner|deploy)"
+        helper_image = "titilambert/gitlab-runner-helper:x86_64-d97749b6"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -66,10 +71,13 @@ spec:
       serviceAccountName: gitlab-runner
       containers:
       - name: gitlab-runner 
-        image: gitlab/gitlab-runner:latest
+        image: gitlab/gitlab-runner:alpine
+        command:
+        - '/bin/bash'
+        - '/scripts/entrypoint'
         volumeMounts:
         - name: config
-          mountPath: /etc/gitlab-runner
+          mountPath: /scripts
       volumes:
       - name: config
         configMap:
